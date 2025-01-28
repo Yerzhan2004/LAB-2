@@ -1,0 +1,12 @@
+def custom_hash(data: str) -> str:
+    hash_value = 0
+    prime = 31
+    for char in data:
+        hash_value = (hash_value * prime + ord(char)) % (2**16)
+
+    return hex(hash_value)[2:].zfill(4)
+
+data = "blockchain"
+hash_result = custom_hash(data)
+print(f"Input: {data}")
+print(f"Custom Hash: {hash_result}")
