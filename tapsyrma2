@@ -1,0 +1,22 @@
+import time
+def custom_hash(data: str) -> str:
+    hash_value = 0
+    prime = 31
+    for char in data:
+        hash_value = (hash_value * prime + ord(char)) % (2**16)
+    return hex(hash_value)[2:].zfill(4)
+class Block:
+    def __init__(self, data: str, previous_hash: str = "0" * 4):
+        self.timestamp = time.time()
+        self.data = data
+        self.previous_hash = previous_hash
+        self.current_hash = self.calculate_hash()
+    def calculate_hash(self) -> str:
+        block_content = f"{self.timestamp}{self.data}{self.previous_hash}"
+        return custom_hash(block_content)
+genesis_block = Block("This is the genesis block")
+print("Genesis Block:")
+print(f"Timestamp: {genesis_block.timestamp}")
+print(f"Data: {genesis_block.data}")
+print(f"Previous Hash: {genesis_block.previous_hash}")
+print(f"Current Hash: {genesis_block.current_hash}")
