@@ -1,0 +1,42 @@
+import time
+def custom_hash(data: str) -> str:
+    hash_value = 0
+    prime = 31
+    for char in data:
+        hash_value = (hash_value * prime + ord(char)) % (2**16)
+    return hex(hash_value)[2:].zfill(4)
+class Block:
+    def __init__(self, data: str, previous_hash: str = "0" * 4):
+        self.timestamp = time.time()
+        self.data = data
+        self.previous_hash = previous_hash
+        self.current_hash = self.calculate_hash()
+
+    def calculate_hash(self) -> str:
+        return custom_hash(f"{self.timestamp}{self.data}{self.previous_hash}")
+class Blockchain:
+    def __init__(self):
+        self.chain = [self.create_genesis_block()]
+
+    def create_genesis_block(self) -> Block:
+        return Block("Genesis Block")
+
+    def add_block(self, data: str):
+        previous_block = self.chain[-1]
+        self.chain.append(Block(data, previous_block.current_hash))
+
+    def is_valid_chain(self) -> bool:
+        for i in range(1, len(self.chain)):
+            current, previous = self.chain[i], self.chain[i - 1]
+            if current.previous_hash != previous.current_hash or current.current_hash != current.calculate_hash():
+                return False
+        return True
+
+blockchain = Blockchain()
+blockchain.add_block("Block 1 data")
+blockchain.add_block("Block 2 data")
+
+for block in blockchain.chain:
+    print(f"Data: {block.data}, Previous Hash: {block.previous_hash}, Current Hash: {block.current_hash}")
+
+print("\nBlockchain valid:", blockchain.is_valid_chain())
